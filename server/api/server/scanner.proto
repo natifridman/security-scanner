@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api.server;
+
+import "google/api/annotations.proto";
+
+option go_package = "server/api/server;server";
+option java_multiple_files = true;
+option java_package = "api.server";
+
+service Scanner {
+	rpc Scan (ScanRequest) returns (ScanReply) {
+		option (google.api.http) = {
+			get: "/scan/{name}"
+		};
+	};
+}
+
+message ScanRequest {
+	string name = 1;
+}
+message ScanReply {
+	string message = 1;
+}
