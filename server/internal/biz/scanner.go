@@ -147,9 +147,6 @@ func (uc *ScannerUsecase) getRepository(ctx context.Context, org string, repo *g
 		return RepositoryInfo{}
 	}
 
-	// collaborator/team permissions
-	// permissions := FetchRepositoryPermissions(ctx, repoDetails, org, client)
-
 	// Return repo data
 	return NormalizeRepoData(repoDetails)
 }
