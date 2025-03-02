@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"encoding/json"
 	pb "server/api/server"
 	"server/internal/biz"
 )
@@ -23,5 +24,11 @@ func (s *ScannerService) Scan(ctx context.Context, req *pb.ScanRequest) (*pb.Sca
 	if err != nil {
 		return nil, err
 	}
-	return &pb.ScanReply{Message: "Hello " + g.Repository}, nil
+
+	// Convert struct to JSON
+	jsonData, err := json.Marshal(g.ScannedRepos)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ScanReply{Message: string(jsonData)}, nil
 }
