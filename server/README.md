@@ -40,6 +40,11 @@ cd cmd/server
 wire
 ```
 
+## Run
+```bash
+make run
+```
+
 ## Docker
 ```bash
 # build
