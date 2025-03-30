@@ -1,0 +1,10 @@
+{
+  "name": "restricted-teams",
+  "description": "Prohibits teams with specific names from having access to repositories",
+  "severity": "HIGH",
+  "resource_type": "team",
+  "patterns": {
+    "Blacklisted team name": "(?i)^(temp|temporary|test)-.*$",
+    "External teams": "(?i).*-external$"
+  }
+} 

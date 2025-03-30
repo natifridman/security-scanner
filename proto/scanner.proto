@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package scanner;
+
+option go_package = ".;api";
+
+// The security scanner service definition
+service SecurityScanner {
+  // List repositories in a GitHub organization
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse) {}
+  
+  // Get detailed information about a specific repository
+  rpc GetRepository(GetRepositoryRequest) returns (RepositoryDetail) {}
+  
+  // Scan a repository for security policy violations
+  rpc ScanRepository(ScanRepositoryRequest) returns (ScanResult) {}
+  
+  // Scan all repositories in an organization
+  rpc ScanOrganization(ScanOrganizationRequest) returns (ScanOrganizationResult) {}
+}
+
+// Request to list repositories in an organization
+message ListRepositoriesRequest {
+  string organization = 1;
+  int32 page = 2;
+  int32 per_page = 3;
+}
+
+// Response containing a list of repositories
+message ListRepositoriesResponse {
+  repeated Repository repositories = 1;
+  int32 total_count = 2;
+}
+
+// Request to get detailed information about a repository
+message GetRepositoryRequest {
+  string organization = 1;
+  string repository = 2;
+}
+
+// Basic repository information
+message Repository {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string html_url = 4;
+  bool is_private = 5;
+  string default_branch = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+// Detailed repository information including access data
+message RepositoryDetail {
+  Repository repository = 1;
+  repeated Collaborator collaborators = 2;
+  repeated Team teams = 3;
+  repeated Branch branches = 4;
+  repeated Protection protections = 5;
+}
+
+// Information about a repository collaborator
+message Collaborator {
+  string id = 1;
+  string login = 2;
+  string type = 3;
+  string permission = 4;
+}
+
+// Information about a team with access to a repository
+message Team {
+  string id = 1;
+  string name = 2;
+  string permission = 3;
+}
+
+// Information about a repository branch
+message Branch {
+  string name = 1;
+  bool protected = 2;
+}
+
+// Information about branch protection rules
+message Protection {
+  string branch = 1;
+  bool require_pull_request = 2;
+  int32 required_approving_review_count = 3;
+  bool dismiss_stale_reviews = 4;
+  bool require_code_owner_reviews = 5;
+  bool allow_force_pushes = 6;
+  bool allow_deletions = 7;
+}
+
+// Request to scan a repository for policy violations
+message ScanRepositoryRequest {
+  string organization = 1;
+  string repository = 2;
+  repeated string policies = 3; // Optional policy names to scan with
+}
+
+// Result of a security policy scan on a repository
+message ScanResult {
+  Repository repository = 1;
+  repeated Violation violations = 2;
+  bool compliant = 3;
+  string scan_time = 4;
+}
+
+// Request to scan all repositories in an organization
+message ScanOrganizationRequest {
+  string organization = 1;
+  repeated string policies = 2; // Optional policy names to scan with
+}
+
+// Result of a security policy scan on an organization
+message ScanOrganizationResult {
+  string organization = 1;
+  repeated ScanResult repository_results = 2;
+  int32 total_repositories = 3;
+  int32 compliant_repositories = 4;
+  int32 non_compliant_repositories = 5;
+  string scan_time = 6;
+}
+
+// A policy violation detected during scanning
+message Violation {
+  string policy_name = 1;
+  string description = 2;
+  string severity = 3; // HIGH, MEDIUM, LOW
+  string resource_type = 4; // e.g., "collaborator", "team", "branch", "protection"
+  string resource_id = 5;
+  map<string, string> details = 6;
+} 
