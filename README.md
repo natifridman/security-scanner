@@ -21,7 +21,7 @@ A gRPC-based service that scans GitHub organizations and repositories for securi
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/security-scanner.git
+git clone https://github.com/natifridman/security-scanner.git
 cd security-scanner
 ```
 
@@ -42,6 +42,43 @@ cp .env.example .env
 ```
 GITHUB_TOKEN=your_github_personal_access_token
 ```
+
+## Generating Protocol Buffer Files
+
+If you make changes to the protocol buffer definitions in `proto/scanner.proto`, you'll need to regenerate the Go code:
+
+1. Make sure you have the protocol buffer compiler installed:
+
+```bash
+# For Ubuntu/Debian
+apt-get install -y protobuf-compiler
+
+# For macOS
+brew install protobuf
+```
+
+2. Install the Go plugins for protoc:
+
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+```
+
+3. Make sure the protoc plugins are in your PATH:
+
+```bash
+export PATH="$PATH:$(go env GOPATH)/bin"
+```
+
+4. Generate the Go code from the proto file:
+
+```bash
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    proto/scanner.proto
+```
+
+This will update the generated files in the `pkg/api` directory.
 
 ## Running the Service
 
