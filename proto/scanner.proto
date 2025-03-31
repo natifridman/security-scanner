@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package scanner;
 
-option go_package = ".;api";
+option go_package = "github.com/nafridma/security-scanner/pkg/api";
 
 // The security scanner service definition
 service SecurityScanner {
